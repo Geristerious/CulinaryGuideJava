@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:form="http://www.springframework.org/tags/form"
+      xsi:schemaLocation="http://www.thymeleaf.org "
+>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Добавить - Ингредиент</title>
+    <link href="/bootstrap.css" rel="stylesheet"/>
+    <link href="/site.css" rel="stylesheet"/>
+    <script src="/modernizr-2.8.3.js"></script>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/cooking">Кулинарный справочник</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/dish">Блюда</a></li>
+                <li><a href="/dishCategory">Категории блюд</a></li>
+                <li><a href="/ingredient">Ингредиенты</a></li>
+                <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
+                <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
+                <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+</div>
+<div class="container body-content">
+    <h2>Добавить ингредиент</h2>
+    <form th:method="POST" th:action="@{'/ingredient/Create'}" th:object="${ingredient}"  >
+        <div  th:object="${cooking}">
+            <input th:if="${cooking != null}"  th:field="*{descriptionCooking}" type="hidden" th:value="${cooking.descriptionCooking}">
+            <input th:if="${cooking != null}" th:field="*{dish}" type="hidden" th:value="${cooking.dish}">
+<!--            <input th:if="${cooking != null}" th:field="*{dish}" type="hidden" th:value="${cooking.dish.id}">-->
+            <input th:if="${cooking != null}" th:field="*{timeCooking}" type="hidden" th:value="${cooking.timeCooking}">
+        </div>
+        <tr type="hidden"  th:if="${selectedIngredientDishes!=null and selectedIngredientDishes.size() > 0} and ${selectedIngredientDishes != null}"  th:each="selectedIngredientDish: ${selectedIngredientDishes}">
+            <td><input type="hidden" th:name="selectedIngredientDishesList" th:value="${selectedIngredientDish}"/></td>
+        </tr>
+        <tr type="hidden"  th:if="${selectedIngredientReplaces.size() > 0 and selectedIngredientReplaces != null}"  th:each="selectedIngredientReplace: ${selectedIngredientReplaces}">
+            <td><input type="hidden" th:name="selectedIngredientReplacesList" th:value="${selectedIngredientReplace}"/></td>
+        </tr>
+
+        <input th:name="path"  type="hidden" th:value="${path}" />
+<!--        <input name="__RequestVerificationToken" type="hidden" value="HaMP9ZSQBNnnnQlfrmwMs3GOAs2aXUXJ9e8Ruxe42jNeyUgJ14v8oAOELgfaaiIauqbQBl5MlGkxvX_XgmlbkQvqQJfU41R0HTCSzGNOJZ_ll4MDB9f-sUd_YNammXcKPRHYG2lNLf9LwydNfIm90w2" />    -->
+        <div class="form-horizontal">
+        <hr />
+        <div class="form-group">
+            <label class="control-label col-md-2" for="NameIngredient">Ингредиент</label>
+            <div class="col-md-10">
+                <input th:field="*{nameIngredient}"  id="nameIngredient"  class="form-control text-box single-line" data-val="true"  type="text" value="" />
+                <span th:if="${#fields.hasErrors('nameIngredient')}" th:errors="*{nameIngredient}" class="text-danger field-validation-error"  data-valmsg-replace="true"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-md-2" for="ingredientCategory">Категория ингредиента</label>
+            <div class="col-md-10">
+                <select th:name="selectedIngredientCategory" id="ingredientCategory"  class="form-control chosen-category" >
+                    <option value="">Выберите категорию</option>
+
+                    <option  th:each="ingredientCategory :${ingredientCategories}"
+                             th:value="${ingredientCategory.id}"
+                             th:text="${ingredientCategory.nameIngredientCategory}"
+                             th:selected="(${ingredientCategory.nameIngredientCategory} == ${selectedIngredientCategory})">
+                </select>
+<!--                th:value="${ingredientCategory.id}"-->
+                <span th:if="${#fields.hasErrors('ingredientCategory')}"  th:errors="*{ingredientCategory}" class="text-danger field-validation-error"  data-valmsg-replace="true"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Добавить ингредиент" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+    </form>
+    <div>
+        <a href="/ingredient">Вернуться</a>
+    </div>
+    <hr />
+    <footer>
+        <p>&copy; 2023 - мое приложение ASP.NET</p>
+    </footer>
+</div>
+
+<script src="/jquery-3.4.1.js"></script>
+<script src="/bootstrap.js"></script>
+<script src="/jquery.validate.js"></script>
+<script src="/jquery.validate.unobtrusive.js"></script>
+</body>
+</html>

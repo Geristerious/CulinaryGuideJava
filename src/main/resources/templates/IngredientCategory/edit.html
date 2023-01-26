@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org "
+>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Изменить - Категория ингредиента</title>
+    <link href="/bootstrap.css" rel="stylesheet"/>
+    <link href="/site.css" rel="stylesheet"/>
+    <script src="/modernizr-2.8.3.js"></script>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/cooking">Кулинарный справочник</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/dish">Блюда</a></li>
+                <li><a href="/dishCategory">Категории блюд</a></li>
+                <li><a href="/ingredient">Ингредиенты</a></li>
+                <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
+                <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
+                <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container body-content">
+    <h2>Изменить</h2>
+    <form th:method="POST"  th:action="@{'/ingredientCategory/Edit/'+${ingredientCategory.id}}" th:object="${ingredientCategory}" >
+<!--        <input name="__RequestVerificationToken" type="hidden" value="rkVNBHEqoJCsTu_iaaG-P06_ZoovBdjDtAClpOnjqqqjU59Qr5Dazg0w_hpm0Y0CToWx8wTV_7kwqhox2IDIYzUzW_yz_aYQqOb39NOzg-UAWiv38ufTvJ2QdrerU-z8Wc_7pLiPvibmc08LbL1B8Q2" />       -->
+        <div class="form-horizontal">
+        <hr />
+<!--        <input data-val="true" data-val-number="Значением поля ID должно быть число." data-val-required="Требуется поле ID." id="ID" name="ID" type="hidden" value="1007" />-->
+
+        <div class="form-group">
+            <label class="control-label col-md-2" for="nameIngredientCategory">Категория ингредиента</label>
+            <div class="col-md-10">
+                <input th:field="${ingredientCategory.nameIngredientCategory}" class="form-control text-box single-line"   id="nameIngredientCategory" name="NameIngredientCategories" type="text" />
+                <span th:if="${#fields.hasErrors('nameIngredientCategory')}"  th:errors="*{nameIngredientCategory}" class="text-danger field-validation-error"  data-valmsg-replace="true"/>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Сохранить изменения" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+        <div>
+            <a href="/ingredientCategory">Вернуться</a>
+        </div>
+    </form>
+
+    <hr />
+    <footer>
+        <p>&copy; 2023 - мое приложение ASP.NET</p>
+    </footer>
+</div>
+<script src="/jquery-3.4.1.js"></script>
+<script src="/bootstrap.js"></script>
+<script src="/jquery.validate.js"></script>
+<script src="/jquery.validate.unobtrusive.js"></script>
+</body>
+</html>

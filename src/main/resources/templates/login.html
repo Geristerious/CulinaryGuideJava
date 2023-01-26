@@ -1,0 +1,98 @@
+
+<!--<div th:if="${param.logout}">-->
+<!--  Вы вышли из системы.-->
+<!--</div>-->
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extrasspringsecurity3">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход</title>
+  <link href="/bootstrap.css" rel="stylesheet"/>
+  <link href="/site.css" rel="stylesheet"/>
+  <script src="/modernizr-2.8.3.js"></script>
+
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/cooking">Кулинарный справочник</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/dish">Блюда</a></li>
+        <li><a href="/dishCategory">Категории блюд</a></li>
+        <li><a href="/ingredient">Ингредиенты</a></li>
+        <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
+        <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
+        <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="container body-content">
+  <h1>Вход</h1>
+  <form th:action="@{/login}" method="post">
+    <div class="form-horizontal">
+    <hr />
+
+    <div class="form-group">
+      <label class="control-label col-md-2" for="UserName">Логин</label>
+      <div class="col-md-10">
+        <input  class="form-control text-box single-line" id="UserName"  type="text" name="username"/>
+<!--        <input data-val="true" data-val-required="Требуется поле Логин." id="UserName" name="UserName" type="text" value="" />-->
+        <span class="field-validation-valid text-danger" data-valmsg-for="UserName" data-valmsg-replace="true"></span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-md-2" for="Password">Пароль</label>
+      <div class="col-md-10">
+        <input class="form-control" type="password" id="Password" name="password"/>
+<!--        <input  data-val="true" data-val-required="Требуется поле Пароль."  type="password" />-->
+        <span class="field-validation-valid text-danger" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+      </div>
+    </div>
+
+
+    <div class="form-group">
+      <div class="col-md-offset-2 col-md-10">
+        <input type="submit" value="Войти   " class="btn btn-primary" />
+      </div>
+    </div>
+
+  </div>
+  </form><br />
+  <a href="/registration">Создать аккаунт</a>
+  <hr />
+  <footer>
+    <p>&copy; 2023 - мое приложение ASP.NET</p>
+  </footer>
+</div>
+
+<script src="/jquery-3.4.1.js"></script>
+<script src="/bootstrap.js"></script>
+
+</body>
+</html>

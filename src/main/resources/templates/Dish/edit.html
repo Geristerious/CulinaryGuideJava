@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:form="http://www.springframework.org/tags/form"
+      xmlns="http://www.w3.org/1999/html"
+      xsi:schemaLocation="http://www.thymeleaf.org ">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Изменить - Блюда</title>
+  <link href="/bootstrap.css" rel="stylesheet"/>
+  <link href="/site.css" rel="stylesheet"/>
+  <script src="/modernizr-2.8.3.js"></script>
+  <link href="/bootstrap-chosen.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/cooking">Кулинарный справочник</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/dish">Блюда</a></li>
+        <li><a href="/dishCategory">Категории блюд</a></li>
+        <li><a href="/ingredient">Ингредиенты</a></li>
+        <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
+        <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
+        <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="container body-content">
+
+  <h2>Изменить</h2>
+<!--  <form th:method="POST" th:action="@{'/dish/Create'}" th:object="${dish}" >-->
+    <form th:method="POST" th:action="@{'/dish/Edit/'+${dish.id}}" th:object="${dish}"  >
+    <div class="form-horizontal">
+      <input th:field="${dish.id}"   id="id"  class="form-control text-box single-line" data-val="true"  type="hidden" value="" />
+      <input th:field="${dish.author}"   id="author}"  class="form-control text-box single-line" data-val="true"  type="hidden" value="" />
+    <hr />
+    <div class="form-group">
+      <label class="control-label col-md-2" for="nameDish">Блюдо</label>
+      <div class="col-md-10">
+        <input th:field="${dish.nameDish}"  id="nameDish"  class="form-control text-box single-line" data-val="true"  type="text" value="" />
+        <span th:if="${#fields.hasErrors('nameDish')}" th:errors="*{nameDish}" class="text-danger field-validation-error"  data-valmsg-replace="true"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-md-2" for="valueCarbohydrates">Количество углеводов (гр)</label>
+      <div class="col-md-10">
+        <input th:field="${dish.valueCarbohydrates}"  type="number" id="valueCarbohydrates"  class="form-control text-box single-line" data-val="true"  value="" />
+        <span th:if="${#fields.hasErrors('valueCarbohydrates')}" th:errors="*{valueCarbohydrates}" class="text-danger field-validation-error"  data-valmsg-replace="true"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-md-2" for="valueFats">Количество жиров (гр)</label>
+      <div class="col-md-10">
+        <input th:field="${dish.valueFats}"  id="valueFats"  class="form-control text-box single-line" data-val="true" type="number" value="" />
+        <span th:if="${#fields.hasErrors('valueFats')}" th:errors="*{valueFats}" class="text-danger field-validation-error"  data-valmsg-replace="true"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-md-2" for="valueProteins">Количество белков (гр)</label>
+      <div class="col-md-10">
+        <input th:field="${dish.valueProteins}"  id="valueProteins"  class="form-control text-box single-line" data-val="true"  type="number" value="" />
+        <span th:if="${#fields.hasErrors('valueProteins')}" th:errors="*{valueProteins}" class="text-danger field-validation-error"  data-valmsg-replace="true"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label col-md-2" for="valueCalories">Количество калорий (ккал)</label>
+      <div class="col-md-10">
+        <input th:field="${dish.valueCalories}"  id="valueCalories"  class="form-control text-box single-line" data-val="true"  type="number" value="" />
+        <span th:if="${#fields.hasErrors('valueCalories')}" th:errors="*{valueCalories}" class="text-danger field-validation-error"  data-valmsg-replace="true"/>
+      </div>
+    </div>
+    <div class="form-group">
+
+      <label class="control-label col-md-2" >Категория блюда</label>
+      <div class="col-md-10">
+
+        <select  th:name="selectedDishCategoriesId" class="form-control chosen-category" id="dishCategories" data-val="true" multiple="multiple" >
+            <option  th:each="dishCategory :${allDishCategories}"
+                     th:value="${dishCategory.id}"
+                     th:text="${dishCategory.nameDishCategory}"
+                     th:selected="${selectedDishCategories.contains(dishCategory.id)}">
+        </select>
+        <br>
+<!--        <span th:if="${#fields.hasErrors('dishCategories')}"  th:errors="*{dishCategories}" class="text-danger field-validation-error"  data-valmsg-replace="true"/>-->
+      </div>
+    </div>
+    <div class="form-group">
+      <div class="col-md-offset-2 col-md-10">
+        <input type="submit" value="Добавить блюдо" class="btn btn-default" />
+      </div>
+    </div>
+
+  </div>
+  </form>
+  <div>
+    <a href="/dish">Вернуться</a>
+  </div>
+  <hr />
+  <footer>
+    <p>&copy; 2023 - мое приложение ASP.NET</p>
+  </footer>
+</div>
+
+<script src="/jquery-3.4.1.js"></script>
+<script src="/bootstrap.js"></script>
+<script src="/jquery.validate.js"></script>
+<script src="/jquery.validate.unobtrusive.js"></script>
+<script src="/chosen.jquery.js"></script>
+<script type="text/javascript" charset="utf-8">
+        $(function () {
+            $(".chosen-category").chosen();
+        });
+    </script>
+<script>
+        $.validator.methods.range = function (value, element, param) {
+            var globalizedValue = value.replace(",", ".");
+            return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
+        }
+        $.validator.methods.number = function (value, element) {
+            return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
+        }
+    </script>
+</body>
+</html>

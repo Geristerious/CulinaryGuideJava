@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Кулинарный справочник</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark" th:fragment="header">
+
+  <a class="navbar-brand" th:href="@{/}">Кулинарный справочник</a>
+
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04"
+          aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExample04">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item" th:class="${activePage == 'dish'} ? 'nav-item active' : 'nav-item'">
+        <a class="nav-link" th:href="@{/dish}">Блюда<span class="sr-only">(current)</span></a>
+      </li>
+
+
+      <li class="nav-item" th:class="${activePage == 'dishCategory'} ? 'nav-item active' : 'nav-item'">
+        <a class="nav-link" th:href="@{/dishCategory}">Категории блюд<span class="sr-only">(current)</span></a>
+      </li>
+
+      <li class="nav-item" th:class="${activePage == 'ingredient'} ? 'nav-item active' : 'nav-item'">
+        <a class="nav-link" th:href="@{/ingredient}">Ингредиенты<span class="sr-only">(current)</span></a>
+      </li>
+
+      <li class="nav-item" th:class="${activePage == 'ingredientCategory'} ? 'nav-item active' : 'nav-item'">
+        <a class="nav-link" th:href="@{/ingredientCategory}">Категории ингредиентов<span class="sr-only">(current)</span></a>
+      </li>
+
+
+<!--    <li class="nav-item" th:class="${activePage == 'info'} ? 'nav-item active' : 'nav-item'">-->
+<!--        <a class="nav-link" th:href="@{/info}">Info<span class="sr-only">(current)</span></a>-->
+<!--      </li>-->
+<!--      <li class="nav-item" th:class="${activePage == 'contact'} ? 'nav-item active' : 'nav-item'">-->
+<!--        <a class="nav-link" th:href="@{/contact}">Contact</a>-->
+<!--      </li>-->
+    </ul>
+  </div>
+</nav>
+</body>
+</html>

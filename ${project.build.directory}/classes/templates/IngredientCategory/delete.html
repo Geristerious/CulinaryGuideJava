@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org "
+>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete - приложение ASP.NET</title>
+    <link href="bootstrap.css" rel="stylesheet"/>
+    <link href="site.css" rel="stylesheet"/>
+    <script src="modernizr-2.8.3.js"></script>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/Cookings">Кулинарный справочник</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/Dishes">Блюда</a></li>
+                <li><a href="/DishCategories">Категории блюд</a></li>
+                <li><a href="/Ingredients">Ингредиенты</a></li>
+                <li><a href="/IngredientCategories">Категории ингредиентов</a></li>
+
+            </ul>
+            <form action="/Account/LogOff" class="navbar-right" id="logoutForm" method="post"><input name="__RequestVerificationToken" type="hidden" value="02NuYH9wofovHn-jaYyGqZekhBOL5tzZDwf19vT58uWmJ5gzu4ZSlxENezK8ZQ3coraNeuFyocUI5OVcuFtqM5qv9pwdj2dhb_aqNlVldjpHFW-AJ1gplOOWmp-415LFP_Ix570KYUmVdMtLqy7rLw2" />                        <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="/Account/Manage" title="Manage">Здравствуйте Administrator!</a>
+                </li>
+                <li>
+                    <a href="/Cookings/OutputSelectedRecipes">Избранное</a>
+                </li>
+                <li><a href="javascript:document.getElementById('logoutForm').submit()">Выйти</a></li>
+            </ul>
+            </form>            </div>
+
+    </div>
+</div>
+<div class="container body-content">
+
+    <h3 th:Text="Вы действительно хотите удалить категорию с названием ${ingredientCategory.NameIngredientCategory}?"/>
+    <div>
+        <hr/>
+        <form action="/IngredientCategories/Delete/1007" method="post"><input name="__RequestVerificationToken" type="hidden" value="MiaO9z_hywqxuB-seP6VSlTU8jzPfIRExoNqYaJN2MB_OcYp_tHv_TxgZoWwRlCS3gaiNeJFbU56hzw8W4q64TED6yzhkpx3g14YsoDTIwroLAjLtPSNGRwmX9FqEix49HiPCx37-1SPZkd2CdVMlw2" />            <div class="form-group">
+            <span class="field-validation-valid text-danger" data-valmsg-for="NameIngredientCategories" data-valmsg-replace="true"></span>
+        </div>
+            <div class="form-actions no-color">
+                <input type="submit" value="Удалить" class="btn btn-default" /> |
+                <a href="/IngredientCategories">Вернуться</a>
+            </div>
+        </form>    </div>
+
+    <hr />
+    <footer>
+        <p>&copy; 2022 - мое приложение ASP.NET</p>
+    </footer>
+</div>
+
+<script src="/Scripts/jquery-3.4.1.js"></script>
+
+<script src="/Scripts/bootstrap.js"></script>
+
+
+</body>
+</html>

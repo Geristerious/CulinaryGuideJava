@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org "
+>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Изменение данных</title>
+  <link href="/bootstrap.css" rel="stylesheet"/>
+  <link href="/site.css" rel="stylesheet"/>
+  <script src="/modernizr-2.8.3.js"></script>
+
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/cooking">Кулинарный справочник</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/dish">Блюда</a></li>
+        <li><a href="/dishCategory">Категории блюд</a></li>
+        <li><a href="/ingredient">Ингредиенты</a></li>
+        <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
+        <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
+        <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="container body-content">
+
+  <h1>Изменить данные</h1>
+
+  <form th:method="POST"  th:action="@{'/account/ChangeProfile'}" th:object="${account}" >
+    <hr>
+    <div class="form-horizontal">
+      <div class="form-group">
+        <div class="col-md-2">
+          <big>  <label th:text="${'E-mail:'}">  </label></big>
+        </div>
+        <input th:name="email" th:value="${account.email}" type="email"/>
+      </div>
+    </div>
+    <td><input type="submit" value="Сохранить изменения" class="btn btn-default" /></td>
+  </form>
+  <div class="validation-summary-valid" data-valmsg-summary="true"><ul><li style="display:none"></li>
+  </ul></div>
+
+  <hr />
+  <footer>
+    <p>&copy; 2023 - мое приложение ASP.NET</p>
+  </footer>
+</div>
+<script src="/jquery-3.4.1.js"></script>
+
+<script src="/bootstrap.js"></script>
+
+
+</body>
+</html>

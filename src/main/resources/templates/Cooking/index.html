@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extrasspringsecurity3"
+      xsi:schemaLocation="http://www.thymeleaf.org "
+
+>
+<head>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Рецепты</title>
+  <link th:href="bootstrap.css" rel="stylesheet"/>
+  <link href="/bootstrap.css" rel="stylesheet"/>
+  <link href="/site.css" rel="stylesheet"/>
+  <script type="text/javascript" src="/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=uXyM4kriH14UE9FCbEw7TyDL8NiRsO8cKZwldXwaQqrjCSTCwFG8IpnNMwzvAieXnz610ulMn1C4fyeydHQ1Sw" charset="UTF-8"></script>
+  <script src="/modernizr-2.8.3.js"></script>
+  <link href="/bootstrap-chosen.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="/cooking">Кулинарный справочник</a>
+    </div>
+    <div class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="/dish">Блюда</a></li>
+        <li><a href="/dishCategory">Категории блюд</a></li>
+        <li><a href="/ingredient">Ингредиенты</a></li>
+        <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
+        <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
+        <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
+        <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<div class="container body-content">
+  <h2>Рецепты</h2>
+  <p>
+    <a th:if="${role}!='anonymousUser'" th:href="@{'/cooking/ChoiceDish'}">Создать рецепт</a>
+  <hr />
+
+
+  <form  th:action="@{'/cooking'}" th:method="POST" >
+    <div class="row">
+    <div class="col-md-3">
+      <select th:name="selectedDishId" class="form-control" >
+        <option value="">Выберите блюдо</option>
+        <option  th:each="dish :${dishes}"
+                 th:value="${dish.id}"
+                 th:text="${dish.nameDish}"
+                 th:selected="(${dish.nameDish} == ${selectedDish})">
+      </select>
+
+    </div>
+    <div class="col-md-3">
+      <select  th:name="selectedIngredientsId" class="form-control chosen-category" id="ingredients" data-val="true" multiple="multiple" >
+        <option  th:each="ingredient :${ingredients}"
+                 th:value="${ingredient.id}"
+                 th:text="${ingredient.nameIngredient}"
+                 th:selected="${selectedIngredients.contains(ingredient.id)}">
+      </select>
+
+    </div>
+    <div class="col-md-3">
+      <input type="submit" value="Применить" class="btn btn-default">
+    </div>
+  </div>
+  </form>
+
+
+  <br />
+
+
+  <table class="table">
+    <tr>
+      <th>
+        Блюдо
+      </th>
+      <th>
+        Время приготовления
+      </th>
+
+      <th></th>
+    </tr>
+
+    <tr th:each="cooking : ${cookings}">
+      <td th:text="${cooking.dish.nameDish}"/>
+      <td th:text="${cooking.timeCooking}"/>
+      <td >
+
+<!--        <a  th:if="${role}!='anonymousUser' and ${selectedRecipe.contains(cooking.id)}" th:href="@{'/cooking/details/'+${cooking.id}}">Посмотреть блюда</a>-->
+<!--        <a  th:if="${role}!='anonymousUser' and ${!selectedRecipe.contains(cooking.id)}" th:href="@{'/ingredient/details/'+${cooking.id}}">Посмотреть блюда</a>-->
+        <a  th:if="${user==cooking.author} or ${role}=='ADMIN'"  th:href="@{'/cooking/WorkWithImage/'+${cooking.id}}">Работа с изображениями</a>
+<!--        <a th:if="${role}=='admin' or ${role}=='operator'" th:href="@{'/ingredient/Edit/'+${ingredient.id}}">|Просмотр</a>-->
+<!--        <a th:if="${role}=='admin' or ${role}=='operator'" th:href="@{'/ingredient/Edit/'+${ingredient.id}}">| Изменить</a>-->
+<!--        <a th:if="${role}=='admin' or ${role}=='operator'" th:href="@{'/ingredient/Delete/'+${ingredient.id}}">| Удалить</a>-->
+      </td>
+    </tr>
+  </table>
+
+
+  <hr />
+  <footer>
+    <p>&copy; 2023 - мое приложение ASP.NET</p>
+  </footer>
+</div>
+<script src="/jquery-3.4.1.js"></script>
+<script th:src="@{/resources/static/bootstrap.js}"></script>
+<script src="/jquery.validate.js"></script>
+<script src="/jquery.validate.unobtrusive.js"></script>
+<script src="/chosen.jquery.js"></script>
+<script src="/chosen.jquery.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+            $(function () {
+                $(".chosen-category").chosen();
+
+            });
+
+        </script>
+<script>
+            $.validator.methods.range = function (value, element, param) {
+                var globalizedValue = value.replace(",", ".");
+                return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
+            }
+
+            $.validator.methods.number = function (value, element) {
+                return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
+            }
+        </script>
+
+</body>
+</html>

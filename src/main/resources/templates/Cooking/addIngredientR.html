@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org "
+>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="/bootstrap.css" rel="stylesheet"/>
+    <link href="/site.css" rel="stylesheet"/>
+    <script src="/modernizr-2.8.3.js"></script>
+    <title>Добавление ингредиентов заменителей - Рецепты</title>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/cooking">Кулинарный справочник</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/dish">Блюда</a></li>
+                <li><a href="/dishCategory">Категории блюд</a></li>
+                <li><a href="/ingredient">Ингредиенты</a></li>
+                <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
+                <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
+                <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+ <div class="container body-content">
+
+    <h2>Добавление ингредиентов заменителей</h2>
+     <div class="form-horizontal"  >
+        <form th:method="POST"  th:action="@{'/cooking/AddIngredientRInRecipe'}" th:object="${cooking}" >
+        <br />
+        <input th:field="*{timeCooking}" type="hidden" th:value="${cooking.timeCooking}">
+        <input  th:field="*{descriptionCooking}" type="hidden" th:value="${cooking.descriptionCooking}">
+        <input th:field="*{dish}" type="hidden" th:value="${cooking.dish.id}">
+        <tr type="hidden"  th:if="${selectedIngredientDishes.size() > 0} and ${selectedIngredientDishes != null}"  th:each="selectedIngredientDish: ${selectedIngredientDishes}">
+            <td><input type="hidden" th:name="selectedIngredientDishesList" th:value="${selectedIngredientDish}"/></td>
+        </tr>
+            <tr type="hidden"  th:if="${selectedIngredientReplaces.size() > 0} and ${selectedIngredientReplaces != null}"  th:each="selectedIngredientReplace: ${selectedIngredientReplaces}">
+                <td><input type="hidden" th:name="selectedIngredientReplacesList" th:value="${selectedIngredientReplace.ingredient.id}+'/'+${selectedIngredientReplace.valueIngredient}+'/'+${selectedIngredientReplace.ingredientRep.id}+'/'+${selectedIngredientReplace.unitMeasure}"/></td>
+            </tr>
+
+            <div th:object="${ingredientReplacement}">
+
+                <div class="form-group">
+                    <div class="control-label col-md-2">
+                        Ингредиент
+                    </div>
+                    <div class="col-md-10">
+                        <select th:field="*{ingredient}"  th:name="selectedIngredientRId" class="form-control chosen-category" >
+                            <option value="">Выберите ингредиент</option>
+                            <option  th:each="ingredient :${ingredientsR}"
+                                     th:value="${ingredient.id}"
+                                     th:text="${ingredient.nameIngredient}">
+                        </select>
+                        <span class="field-validation-valid text-danger" data-valmsg-for="Ingredient" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="control-label col-md-2">
+                        Количество ингредиента
+                    </div>
+                    <div class="col-md-10">
+                        <input th:field="*{valueIngredient}" class="form-control text-box single-line" data-val="true" data-val-number="Значением поля ValueIngredient должно быть число." data-val-range="Количество не должго привышать 9999" data-val-range-max="9999" data-val-range-min="0.01"  id="valueIngredient" max="999999" min="0.01"  step="0.01" type="number" value="" />
+                        <span class="field-validation-valid text-danger" data-valmsg-for="valueIngredient" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="control-label col-md-2">
+                        Ингредиент заменитель
+                    </div>
+                    <div class="col-md-10">
+                        <select th:field="*{ingredientRep}"  th:name="selectedIngredientId" class="form-control chosen-category" >
+                            <option value="">Выберите ингредиент</option>
+                            <option  th:each="ingredient :${ingredients}"
+                                     th:value="${ingredient.id}"
+                                     th:text="${ingredient.nameIngredient}">
+                        </select>
+                        <span class="field-validation-valid text-danger" data-valmsg-for="IngredientR" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="control-label col-md-2">
+                        Единицы измерения
+                    </div>
+                    <div class="col-md-10">
+                        <select th:field="*{unitMeasure}" class="form-control chosen-category"  >
+                            <option value="" >Выберите единицы измерения</option>
+                            <option value="гр">гр</option>
+                            <option value="кг">кг</option>
+                            <option value="л">л</option>
+                            <option value="мл">мл</option>
+                            <option value="ч. ложка">ч. ложка</option>
+                            <option value="с. ложка">с. ложка</option>
+                            <option value="шт">шт</option>
+                        </select>
+                        <span class="field-validation-valid text-danger" data-valmsg-for="unitMeasure" data-valmsg-replace="true"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" name="action" value="Добавить ингредиент" class="btn btn-default">
+                    </div>
+                </div>
+            </div>
+        </form>
+        <form th:method="POST"  th:action="@{'/ingredient/CreateIngredientAddFromOtherR'}" th:object="${cooking}" >
+        <div class="form-group">
+            <input th:field="*{timeCooking}" type="hidden" th:value="${cooking.timeCooking}">
+            <input  th:field="*{descriptionCooking}" type="hidden" th:value="${cooking.descriptionCooking}">
+            <input th:field="*{dish}" type="hidden" th:value="${cooking.dish.id}">
+            <tr type="hidden"  th:if="${selectedIngredientDishes.size() > 0} and ${selectedIngredientDishes != null}"  th:each="selectedIngredientDish: ${selectedIngredientDishes}">
+                <td><input type="hidden" th:name="selectedIngredientDishesList" th:value="${selectedIngredientDish}"/></td>
+            </tr>
+            <tr type="hidden"  th:if="${selectedIngredientReplaces.size() > 0} and ${selectedIngredientReplaces != null}"  th:each="selectedIngredientReplace: ${selectedIngredientReplaces}">
+                <td><input type="hidden" th:name="selectedIngredientReplacesList" th:value="${selectedIngredientReplace.ingredient.id}+'/'+${selectedIngredientReplace.valueIngredient}+'/'+${selectedIngredientReplace.ingredientRep.id}+'/'+${selectedIngredientReplace.unitMeasure}"/></td>
+            </tr>
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" name="action" value="Создать новый ингредиент" class="btn btn-default">
+                <!--                    тут-->
+                <!--                    <a class="btn btn-default" href="/Ingredients/Create?dishId=1054&amp;TimeCooking=23%3A01&amp;DescriptionCooking=fdsfsdf&amp;from=IngredientDish">Создать новый ингредиент</a>-->
+            </div>
+        </div>
+        </form>
+     </div>
+    <br />
+    <table class="table">
+        <tr>
+            <th>
+                Ингредиент
+            </th>
+            <th>
+                Количество ингредиента
+            </th>
+            <th>
+                Ингредиент заменитель
+            </th>
+            <th>
+                Единицы измерения
+            </th>
+            <th></th>
+        </tr>
+        <tr  th:if="${selectedIngredientReplaces.size() > 0}" th:each="selectedIngredientReplace : ${selectedIngredientReplaces}">
+            <td th:text="${selectedIngredientReplace.ingredient.nameIngredient}"></td>
+            <td th:text="${selectedIngredientReplace.valueIngredient}"/>
+            <td th:text="${selectedIngredientReplace.ingredientRep.nameIngredient}"/>
+            <td th:text="${selectedIngredientReplace.unitMeasure}"/>
+            <td>
+                <form th:method="POST"  th:action="@{'/cooking/DeleteIngredientRInRecipe'}" th:object="${cooking}" >
+                    <input th:field="*{timeCooking}" type="hidden" th:value="${cooking.timeCooking}">
+                    <input  th:field="*{descriptionCooking}" type="hidden" th:value="${cooking.descriptionCooking}">
+                    <input th:field="*{dish}" type="hidden" th:value="${cooking.dish.id}">
+                    <div type="hidden"  th:if="${selectedIngredientDishes.size() > 0} and ${selectedIngredientDishes != null}"  th:each="selectedIngredientDish: ${selectedIngredientDishes}">
+                        <input type="hidden" th:name="selectedIngredientDishesList" th:value="${selectedIngredientDish}">
+                    </div>
+                    <div type="hidden"  th:if="${selectedIngredientReplaces.size() > 0} and ${selectedIngredientReplaces != null}"  th:each="selectedIngredientReplace: ${selectedIngredientReplaces}">
+                       <input type="hidden" th:name="selectedIngredientReplacesList" th:value="${selectedIngredientReplace.ingredient.id}+'/'+${selectedIngredientReplace.valueIngredient}+'/'+${selectedIngredientReplace.ingredientRep.id}+'/'+${selectedIngredientReplace.unitMeasure}"/>
+                    </div>
+
+                    <input  th:name="nameIngredient" type="hidden" th:value="${selectedIngredientReplace.ingredient.nameIngredient}">
+                    <input  th:name="nameIngredientR" type="hidden" th:value="${selectedIngredientReplace.ingredientRep.nameIngredient}">
+                    <input type="submit" th:name="action"  class="btn btn-default" th:value="Удалить"  />
+                </form>
+                <!--                    <input type="hidden" th:name="action1"  class="btn btn-default" th:value="${selectedIngredientDish.ingredient.nameIngredient}"  />-->
+            </td>
+            </td>
+        </tr>
+
+
+
+
+    </table>
+    <br>
+     <form th:method="POST"  th:action="@{'/cooking/AddImage'}" th:object="${cooking}" >
+         <input th:field="*{timeCooking}" type="hidden" th:value="${cooking.timeCooking}">
+         <input  th:field="*{descriptionCooking}" type="hidden" th:value="${cooking.descriptionCooking}">
+         <input th:field="*{dish}" type="hidden" th:value="${cooking.dish.id}">
+         <div type="hidden"  th:if="${selectedIngredientDishes.size() > 0} and ${selectedIngredientDishes != null}"  th:each="selectedIngredientDish: ${selectedIngredientDishes}">
+             <input type="hidden" th:name="selectedIngredientDishesList" th:value="${selectedIngredientDish}">
+         </div>
+         <div type="hidden"  th:if="${selectedIngredientReplaces.size() > 0} and ${selectedIngredientReplaces != null}"  th:each="selectedIngredientReplace: ${selectedIngredientReplaces}">
+             <input type="hidden" th:name="selectedIngredientReplacesList" th:value="${selectedIngredientReplace.ingredient.id}+'/'+${selectedIngredientReplace.valueIngredient}+'/'+${selectedIngredientReplace.ingredientRep.id}+'/'+${selectedIngredientReplace.unitMeasure}"/>
+         </div>
+         <div class="form-group">
+        <div class="col-md-offset-11 col-md-10">
+            <input type="submit" name="action" class="btn btn-default" value="Далее" />
+        </div>
+    </div>
+    </form>
+
+    <a href="/Cookings">Вернуться к списку рецептов</a>
+
+    <hr />
+    <footer>
+        <p>&copy; 2023 - мое приложение ASP.NET</p>
+    </footer>
+</div>
+
+
+
+
+
+
+
+<script src="/jquery-3.4.1.js"></script>
+<script src="/bootstrap.js"></script>
+</body>
+</html>
+

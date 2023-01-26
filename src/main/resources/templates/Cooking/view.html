@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.thymeleaf.org "
+>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${cooking.dish.nameDish}"></title>
+    <link href="/bootstrap.css" rel="stylesheet"/>
+    <link href="/site.css" rel="stylesheet"/>
+    <script src="/modernizr-2.8.3.js"></script>
+</head>
+<body>
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/cooking">Кулинарный справочник</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/dish">Блюда</a></li>
+                <li><a href="/dishCategory">Категории блюд</a></li>
+                <li><a href="/ingredient">Ингредиенты</a></li>
+                <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
+                <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
+                <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
+                <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container body-content">
+    <h2 th:text="${cooking.dish.nameDish}"/>
+    <div>
+        <hr />
+        <div class="form-horizontal">
+            <div class="form-horizontal">
+
+                <div class="container">
+                    <div class="row-no-gutters col-lg-10">
+                        <div class="col-lg-5">
+                            <p>
+                                <big><label th:text="${'Время приготовления: '+time}"></label></big>
+
+                            </p>
+                            <p>
+                                <label > <big>Описание процесса приготовления:</big></label>
+                                <textarea th:text="${cooking.descriptionCooking}" class="form-control" cols="40" data-val="true" data-val-length="Максимальное количество символов 5000" data-val-length-max="5000" data-val-length-min="1" data-val-required="Заполните описание процесса приготовления" id="DescriptionCooking" name="DescriptionCooking" readonly="true" rows="15" style="resize:none"
+                                >
+                                </textarea>
+                            </p>
+
+                        </div>
+                        <div class="col-lg-7" width="600">
+                            <label><big>Фото</big></label>
+
+                            <div id="mycarousel" class="carousel slide" data-ride="carousel" carousel>
+                                <div class="carousel-inner" role="listbox"  >
+<!--                                    <div class="item active" >-->
+                                    <div class="item active" >
+                                        <img width="600" th:src="@{'data:image/jpeg;base64,'+${selectedPhoto}}" />
+<!--                                        <img width="600"  th:src="@{'/Images/'+${photo}}" alt="First slide">-->
+                                    </div>
+                                    <div th:each="photo:${photos}" class="item" th:if="${photos.size() > 0}" >
+                                        <img width="600" th:src="@{'data:image/jpeg;base64,'+${photo}}" />
+                                    </div>
+                                </div>
+                                <a class="left carousel-control" href="#mycarousel" role="button" data-slide="prev">
+                                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"> </span>
+                                    <span class="sr-only"> </span>
+                                </a>
+
+                                <a class="right carousel-control" href="#mycarousel" role="button" data-slide="next">
+                                    <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"> </span>
+                                    <span class="sr-only"> </span>
+                                </a>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr />
+                    <div class="row-no-gutters col-lg-10">
+                        <br>
+                        <hr />
+                        <p>
+                            <label><big>Дополнительная информация(100г)</big></label>
+                        </p>
+                        <div class="col-lg-5">
+
+                            <p>
+                                <big><label th:text="${'Количество калорий: '+cooking.dish.valueCalories+' ккал'}"> </label></big>
+                            </p>
+                            <p>
+                                <big> <label th:text="${'Количество жиров: '+cooking.dish.valueFats+' г'}"></label></big>
+                            </p>
+                        </div>
+                        <div class="col-lg-5">
+                            <p>
+                                <big> <label th:text="${'Количество белков: '+cooking.dish.valueProteins+' г'}"></label></big>
+                            </p>
+                            <p>
+                                <big> <label th:text="${'Количество углеводов: '+cooking.dish.valueCarbohydrates+' г'}"></label></big>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="container">
+                    <hr />
+                    <div class="col-md-3">
+                        <label><big>Количество порций</big></label>
+                        <select id="valuePeople" class="form-control">
+                            <option selected>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                            <option>6</option>
+                            <option>7</option>
+                            <option>8</option>
+                            <option>9</option>
+                            <option>10</option>
+                        </select>
+                    </div>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <br>
+                    <table id='dishingredient' class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Ингредиент</th>
+                            <th>Количество</th>
+                            <th>Единицы измерения</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="ingredientDish : ${ingredientDishes}">
+                            <td th:text="${ingredientDish.ingredient.nameIngredient}"></td>
+                            <td th:text="${ingredientDish.valueIngredient}"/>
+                            <td th:text="${ingredientDish.unitMeasure}"/>
+                            <td th:text="${ingredientDish.valueIngredient}" style="display:none;"></td>
+
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="container" th:if="${ingredientReplaces != null} and ${ingredientReplaces.size() > 0} ">
+                        <br>
+                        <table id='dishingredientR' class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Ингредиент</th>
+                                <th>Ингредиент заменитель</th>
+                                <th>Количество</th>
+                                <th>Единицы измерения</th>
+
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr th:each="ingredientReplace : ${ingredientReplaces}">
+                                <td th:text="${ingredientReplace.ingredient.nameIngredient}"></td>
+                                <td th:text="${ingredientReplace.ingredientRep.nameIngredient}"></td>
+                                <td th:text="${ingredientReplace.valueIngredient}"/>
+                                <td th:text="${ingredientReplace.unitMeasure}"/>
+                                <td th:text="${ingredientReplace.valueIngredient}" style="display:none;"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <p>
+        <a href="/cooking">Вернуться</a>
+    </p>
+
+
+
+    <script>
+    document.querySelector("select").addEventListener('change', function (e) {
+        //var td1 = document.getElementById('dishingredient').getElementsByTagName('td');
+        var tr2 = document.getElementById('dishingredient').getElementsByTagName('tr');
+        var i = 1;
+        while (i < tr2.length) {
+            var td2 = tr2[i].getElementsByTagName('td');
+            var value = parseFloat(td2[3].innerHTML.replace(",", ".")) * parseInt(e.target.value);
+            td2[1].innerHTML = parseFloat(value.toFixed(2),10);
+            i++;
+        }
+
+        //------------------------------------------------------------------------------------
+        i = 1;
+        tr2 = document.getElementById('dishingredientR').getElementsByTagName('tr');
+
+        while (i < tr2.length) {
+            var td2 = tr2[i].getElementsByTagName('td');
+
+            var value = parseFloat(td2[4].innerHTML.replace(",", ".")) * parseFloat(e.target.value);
+
+            td2[2].innerHTML = parseFloat(value.toFixed(2), 10);
+            i++;
+        }
+
+
+    })
+
+
+
+</script>
+
+    <hr />
+    <footer>
+        <p>&copy; 2023 - мое приложение ASP.NET</p>
+    </footer>
+</div>
+<script src="/jquery-3.4.1.js"></script>
+<script src="/bootstrap.js"></script>
+</body>
+</html>

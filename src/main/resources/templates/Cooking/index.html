@@ -98,13 +98,13 @@
       <td th:text="${cooking.dish.nameDish}"/>
       <td th:text="${cooking.timeCooking}"/>
       <td >
-
-<!--        <a  th:if="${role}!='anonymousUser' and ${selectedRecipe.contains(cooking.id)}" th:href="@{'/cooking/details/'+${cooking.id}}">Посмотреть блюда</a>-->
-<!--        <a  th:if="${role}!='anonymousUser' and ${!selectedRecipe.contains(cooking.id)}" th:href="@{'/ingredient/details/'+${cooking.id}}">Посмотреть блюда</a>-->
-        <a  th:if="${user==cooking.author} or ${role}=='ADMIN'"  th:href="@{'/cooking/WorkWithImage/'+${cooking.id}}">Работа с изображениями</a>
-<!--        <a th:if="${role}=='admin' or ${role}=='operator'" th:href="@{'/ingredient/Edit/'+${ingredient.id}}">|Просмотр</a>-->
-<!--        <a th:if="${role}=='admin' or ${role}=='operator'" th:href="@{'/ingredient/Edit/'+${ingredient.id}}">| Изменить</a>-->
-<!--        <a th:if="${role}=='admin' or ${role}=='operator'" th:href="@{'/ingredient/Delete/'+${ingredient.id}}">| Удалить</a>-->
+        <a th:href="@{'/cooking/View/'+${cooking.id}}">Посмотреть блюда</a>
+<!--        ${selectedDishCategories.contains(dishCategory.id)}-->
+        <a th:if="${role}!='anonymousUser' and  ${!selectedRecipe.contains(cooking.id)} " th:href="@{'/cooking/AddSelectedRecipes/'+${cooking.id}}">| Добавить в избранное</a>
+        <a  th:if="${role}!='anonymousUser' and ${selectedRecipe.contains(cooking.id)}" th:href="@{'/cooking/DeleteSelectedRecipe/'+${cooking.id}}">| Убрать из избранного</a>
+        <a  th:if="${user==cooking.author} or ${role}=='ADMIN'"  th:href="@{'/cooking/WorkWithImage/'+${cooking.id}}">| Работа с изображениями</a>
+        <a th:if="${user==cooking.author} or ${role}=='ADMIN'" th:href="@{'/cooking/ChangeCooking/'+${cooking.id}}">| Изменить</a>
+        <a th:if="${user==cooking.author} or ${role}=='ADMIN'"  th:href="@{'/cooking/Delete/'+${cooking.id}}">| Удалить</a>
       </td>
     </tr>
   </table>
@@ -112,7 +112,7 @@
 
   <hr />
   <footer>
-    <p>&copy; 2023 - мое приложение ASP.NET</p>
+    <p>&copy; 2023 - мое приложение Spring</p>
   </footer>
 </div>
 <script src="/jquery-3.4.1.js"></script>
@@ -138,6 +138,5 @@
                 return this.optional(element) || /^-?(?:\d+|\d{1,3}(?:[\s\.,]\d{3})+)(?:[\.,]\d+)?$/.test(value);
             }
         </script>
-
 </body>
 </html>

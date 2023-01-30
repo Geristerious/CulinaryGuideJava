@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -255,6 +257,35 @@ public class CookingController {
         model.addAttribute("cookings",  selectedRecipesList);
         return "redirect:/cooking/SelectedRecipe";
     }
+
+    @GetMapping("/DeleteSelectedRecipe/{id}")
+    public String deleteSelectedRecipe(Model model, @PathVariable("id") Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String nameUser=authentication.getName();
+        if(nameUser.equals("anonymousUser")){
+            return "redirect:/cooking";
+        }
+        Role role=roleService.loadRoleByUsername(nameUser);
+        model.addAttribute("role",role.getAuthority());
+        model.addAttribute("user",nameUser);
+
+        for(SelectedRecipes selectedRecipe:selectedRecipesService.list()){
+            if(selectedRecipe.getCooking().getId()==id&&selectedRecipe.getAuthor().equals(nameUser)){
+                selectedRecipesService.deleteSelectedRecipe(selectedRecipe.getId());
+            }
+        }
+
+        List<Cooking> selectedRecipesList=new ArrayList<>();
+        for (SelectedRecipes selectedRecipes: selectedRecipesService.list()){
+            if(selectedRecipes.getAuthor().equals(nameUser))
+                selectedRecipesList.add(selectedRecipes.getCooking());
+        }
+        model.addAttribute("cookings",  selectedRecipesList);
+        return "redirect:/cooking";
+    }
+
+
+
     @GetMapping("/AddSelectedRecipes/{id}")
     public String addSelectedRecipes(Model model, @PathVariable("id") Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -269,22 +300,42 @@ public class CookingController {
     @GetMapping
 
     public String cookingView(Model model) {
-
+        //model.addAttribute("selectedRecipe",new ArrayList<Long>());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String nameUser=authentication.getName();
         if(nameUser.equals("anonymousUser")){
             model.addAttribute("role","anonymousUser");
+            model.addAttribute("cookings", cookingService.list());
+
+            model.addAttribute("selectedRecipe",new ArrayList<Long>());
         }
         else {
             Role role=roleService.loadRoleByUsername(nameUser);
             model.addAttribute("role",role.getAuthority());
+
+            List<Cooking> myCookings=cookingService.getCookingByAuthor(nameUser);
+            List<Cooking> otherCookings=new ArrayList<>();
+            for (Cooking cooking: cookingService.list()) {
+                if(!cooking.getAuthor().equals(nameUser)){
+                    otherCookings.add(cooking);
+                }
+            }
+            List<Cooking> resultList=new ArrayList<>();
+            resultList.addAll(myCookings);
+            resultList.addAll(otherCookings);
+            model.addAttribute("cookings", resultList);
+            List<Long> dsf=selectedRecipesService.list().stream().filter(x->x.getAuthor().equals(nameUser)).map(x->x.getId()).toList();
+            model.addAttribute("selectedRecipe",selectedRecipesService.list().stream().filter(x->x.getAuthor().equals(nameUser)).map(x->x.getCooking().getId()).toList());
         }
+        //myCookings.stream().map().toList()
+
         model.addAttribute("user",nameUser);
+
         model.addAttribute("dishes",dishService.list());
         model.addAttribute("ingredients",ingredientService.list());
         model.addAttribute("selectedDish", "");
         model.addAttribute("selectedIngredients", new ArrayList<Long>());
-        model.addAttribute("cookings", cookingService.list());
+
         return "Cooking/index";
     }
 
@@ -293,8 +344,10 @@ public class CookingController {
     @PostMapping
     public String cookingView(Model model, @RequestParam String selectedDishId,
                               @RequestParam(required=false) ArrayList<Long> selectedIngredientsId) {
-
-
+        model.addAttribute("selectedRecipe",new ArrayList<Long>());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String nameUser=authentication.getName();
+        model.addAttribute("user",nameUser);
         List<Long> resultDishList=new ArrayList<>();
         List<Long> resulCookingList=new ArrayList<>();
         //List<Long>resultCookingList=new ArrayList<>();
@@ -316,15 +369,79 @@ public class CookingController {
 
         model.addAttribute("ingredients",ingredientService.list());
         model.addAttribute("dishes",dishService.list());
-        model.addAttribute("role","admin");
-        if(selectedDishId.equals("")&&(selectedDishId==null)){
-            model.addAttribute("cookings", cookingService.list());
+
+
+        if(selectedDishId.equals("")&&(selectedIngredientsId==null)){
+
+
+            if(nameUser.equals("anonymousUser")){
+                model.addAttribute("role","anonymousUser");
+                model.addAttribute("cookings", cookingService.list());
+                model.addAttribute("selectedRecipe",new ArrayList<Long>());
+
+            }
+            else {
+                Role role=roleService.loadRoleByUsername(nameUser);
+                model.addAttribute("role",role.getAuthority());
+
+                List<Cooking> myCookings=cookingService.getCookingByAuthor(nameUser);
+                List<Cooking> otherCookings=new ArrayList<>();
+                for (Cooking cooking: cookingService.list()) {
+                    if(!cooking.getAuthor().equals(nameUser)){
+                        otherCookings.add(cooking);
+                    }
+                }
+                List<Cooking> resultList=new ArrayList<>();
+                resultList.addAll(myCookings);
+                resultList.addAll(otherCookings);
+                model.addAttribute("cookings", resultList);
+                model.addAttribute("selectedRecipe",selectedRecipesService.list().stream().filter(x->x.getAuthor().equals(nameUser)).map(x->x.getCooking().getId()).toList());
+
+            }
             return "Cooking/index";
         }
 
         if(!selectedDishId.equals("")){ //на null
             resultDishList.addAll(cookingService.getCookingByDishId(Long.valueOf(selectedDishId)).stream().map(cooking -> cooking.getId()).toList());
-            model.addAttribute("cookings", getCookingList(resultDishList));
+            if(isAllNull(resultDishList)){
+                model.addAttribute("cookings", new ArrayList<Cooking>());
+            }
+            else{
+
+                if(nameUser.equals("anonymousUser")){
+                    model.addAttribute("role","anonymousUser");
+                    model.addAttribute("cookings", cookingService.list());
+                }
+                else {
+                    Role role=roleService.loadRoleByUsername(nameUser);
+                    model.addAttribute("role",role.getAuthority());
+
+                    List<Cooking> cookingList=getCookingList(resultDishList);
+
+                    List<Cooking> myCookings=new ArrayList<>();
+                    for (Cooking cooking: cookingList) {
+                        if(cooking.getAuthor().equals(nameUser)){
+                            myCookings.add(cooking);
+                        }
+                    }
+
+                    List<Cooking> otherCookings=new ArrayList<>();
+                    for (Cooking cooking:cookingList) {
+                        if(!cooking.getAuthor().equals(nameUser)){
+                            otherCookings.add(cooking);
+                        }
+                    }
+
+                    List<Cooking> resultList=new ArrayList<>();
+                    resultList.addAll(myCookings);
+                    resultList.addAll(otherCookings);
+                    model.addAttribute("cookings", resultList);
+                }
+
+
+               // model.addAttribute("cookings", getCookingList(resultDishList));
+
+            }
         }
 
 
@@ -337,42 +454,147 @@ public class CookingController {
 
 
                 if(newList.size()!=0&&newRList.size()!=0){
-                    List<Long> unification = Stream.concat(ingredientDishService.getCookingByIngredient(id).stream().map(cooking->cooking.getCooking().getId()).toList().stream(),
-                                    ingredientReplacementService.getCookingByIngredient(id).stream().map(cooking->cooking.getCooking().getId()).toList().stream())
-                            .collect(Collectors.groupingBy(emp -> emp,
-                                    Collectors.reducing(null, (e1, e2) -> e1 ) ))
-                            .values().stream().toList();
 
-                    cookingIdList.add(unification);
+                    List<Long> listForFilter=new ArrayList<>();
+                    listForFilter.addAll(newList);
+                    listForFilter.addAll(newRList);
+
+                    List<Long> listWithoutDuplicates = listForFilter.stream().distinct().collect(Collectors.toList());
+
+//                    List<Long> unification = Stream.concat(ingredientDishService.getCookingByIngredient(id).stream().map(cooking->cooking.getCooking().getId()).toList().stream(),
+//                                    ingredientReplacementService.getCookingByIngredient(id).stream().map(cooking->cooking.getCooking().getId()).toList().stream())
+//                            .collect(Collectors.groupingBy(emp -> emp,
+//                                    Collectors.reducing(null, (e1, e2) -> e1 ) ))
+//                            .values().stream().toList();
+
+                    cookingIdList.add(listWithoutDuplicates);
                 }
 
-                if(newList.size()!=0){
-                    cookingIdList.add(newList);
+                if(newList.size()!=0&&newRList.size()==0){
+                    cookingIdList.add(newList.stream().distinct().collect(Collectors.toList()));
                 }
-                else if(newRList.size()!=0){
-                    cookingIdList.add(newRList);
+                else if(newRList.size()!=0&&newList.size()==0){
+                    cookingIdList.add(newRList.stream().distinct().collect(Collectors.toList()));
                 }
 
             }
 
             resulCookingList=FillUniteList(cookingIdList, true);
 
-            model.addAttribute("cookings", getCookingList(resulCookingList));
+            if(isAllNull(resulCookingList)){
+                model.addAttribute("cookings", new ArrayList<Cooking>());
+            }
+            else{
+
+                if(nameUser.equals("anonymousUser")){
+                    model.addAttribute("role","anonymousUser");
+                    model.addAttribute("cookings", cookingService.list());
+                    model.addAttribute("selectedRecipe",new ArrayList<Long>());
+
+                }
+                else {
+                    Role role=roleService.loadRoleByUsername(nameUser);
+                    model.addAttribute("role",role.getAuthority());
+                    model.addAttribute("selectedRecipe",selectedRecipesService.list().stream().filter(x->x.getAuthor().equals(nameUser)).map(x->x.getCooking().getId()).toList());
+
+                    List<Cooking> cookingList=getCookingList(resulCookingList);
+
+                    List<Cooking> myCookings=new ArrayList<>();
+                    for (Cooking cooking: cookingList) {
+                        if(cooking.getAuthor().equals(nameUser)){
+                            myCookings.add(cooking);
+                        }
+                    }
+
+                    List<Cooking> otherCookings=new ArrayList<>();
+                    for (Cooking cooking:cookingList) {
+                        if(!cooking.getAuthor().equals(nameUser)){
+                            otherCookings.add(cooking);
+                        }
+                    }
+
+                    List<Cooking> resultList=new ArrayList<>();
+                    resultList.addAll(myCookings);
+                    resultList.addAll(otherCookings);
+                    model.addAttribute("cookings", resultList);
+                }
+
+
+               // model.addAttribute("cookings", getCookingList(resulCookingList));
+
+            }
         }
 
 
         if(!selectedDishId.equals("")&&selectedIngredientsId!=null){
-            List<Long> resultList = Stream.concat(resulCookingList.stream(),
-                            resultDishList.stream())
-                    .collect(Collectors.groupingBy(emp -> emp,
-                            Collectors.reducing(null, (e1, e2) -> e1 ) ))
-                    .values().stream().toList();
-            model.addAttribute("cookings", getCookingList(resultList));
+//            List<Long> resultList = Stream.concat(resulCookingList.stream(),
+//                            resultDishList.stream())
+//                    .collect(Collectors.groupingBy(emp -> emp,
+//                            Collectors.reducing(null, (e1, e2) -> e1 ) ))
+//                    .values().stream().toList();
+
+            List<List<Long>> listForFilter=new ArrayList<>();
+            listForFilter.add(resulCookingList);
+            listForFilter.add(resultDishList);
+
+            List<Long> listWithoutDuplicates = FillUniteList(listForFilter,true);
+
+            if(isAllNull(listWithoutDuplicates)||listWithoutDuplicates.size()==0){
+                model.addAttribute("cookings", new ArrayList<Cooking>());
+            }
+            else{
+                if(nameUser.equals("anonymousUser")){
+                    model.addAttribute("role","anonymousUser");
+                    model.addAttribute("cookings", cookingService.list());
+                    model.addAttribute("selectedRecipe",new ArrayList<Long>());
+
+                }
+                else {
+
+                    Role role=roleService.loadRoleByUsername(nameUser);
+                    model.addAttribute("role",role.getAuthority());
+                    model.addAttribute("selectedRecipe",selectedRecipesService.list().stream().filter(x->x.getAuthor().equals(nameUser)).map(x->x.getCooking().getId()).toList());
+
+                    List<Cooking> cookingList=getCookingList(listWithoutDuplicates);
+
+                    List<Cooking> myCookings=new ArrayList<>();
+                    for (Cooking cooking: cookingList) {
+                        if(cooking.getAuthor().equals(nameUser)){
+                            myCookings.add(cooking);
+                        }
+                    }
+
+                    List<Cooking> otherCookings=new ArrayList<>();
+                    for (Cooking cooking:cookingList) {
+                        if(!cooking.getAuthor().equals(nameUser)){
+                            otherCookings.add(cooking);
+                        }
+                    }
+
+                    List<Cooking> resultList=new ArrayList<>();
+                    resultList.addAll(myCookings);
+                    resultList.addAll(otherCookings);
+                    model.addAttribute("cookings", resultList);
+                }
+
+
+
+
+               // model.addAttribute("cookings", getCookingList(listWithoutDuplicates));
+
+            }
 
         }
         return "Cooking/index";
     }
+    public static boolean isAllNull(Iterable<?> list){
+        for(Object obj : list){
+            if(obj != null)
+                return false;
+        }
 
+        return true;
+    }
 
     private List<Cooking> getCookingList(List<Long> list){
         List<Cooking> cookingList=new ArrayList<>();
@@ -509,27 +731,57 @@ public class CookingController {
     public String createCookingAddIngredientAdd(Model model, @ModelAttribute Cooking cooking,
                                                 @ModelAttribute @Valid IngredientDish ingredientDish,
                                                 @RequestParam(required=false) Collection<String> selectedIngredientDishesList,
-                                                @RequestParam(required=false) String action){//userName
+                                                @RequestParam(required=false) String action, BindingResult bindingResult){//userName
+
+//        if(ingredientDish.getIngredient()==null){
+//            bindingResult.addError(new FieldError("ingredientDish", "ingredient", ingredientDish.getIngredient(), true, null, null, "Выберите ингредиент"));
+//        }
+
+
+
+
         model.addAttribute("cooking",cooking);
         model.addAttribute("ingredientDish",new IngredientDish());
+
         if(action.equals("Добавить ингредиент")){
+
+
             List<IngredientDish> ingredientDishList=new ArrayList<>();
             List<Ingredient> ingredients=ingredientService.list();
+
+
+
+
+
             if(selectedIngredientDishesList!=null){
                 for (var item:selectedIngredientDishesList) {
                     String[] data=item.split("/");
                     ingredientDishList.add(new IngredientDish(ingredientService.getIngredientById(Long.valueOf(data[0])).get() ,BigDecimal.valueOf(Float.valueOf(data[1])),data[2]));
                     ingredients.removeIf(x->x.getNameIngredient().equals(ingredientService.getIngredientById(Long.valueOf(data[0])).get().getNameIngredient()));
                 }
-                ingredientDishList.add(ingredientDish);
-                ingredients.removeIf(x->x.getNameIngredient().equals(ingredientDish.getIngredient().getNameIngredient()));
-            }
-            else{
+
+//                if(ingredientDishList.stream().map(x->x.getIngredient().equals(ingredientDish.getIngredient())).isParallel()){
+//                    bindingResult.addError(new FieldError("ingredientDish", "ingredient", new Ingredient(), true, null, null, "Выберите ингредиент"));
+//                }
+
+
+                    if(!bindingResult.hasErrors()){
+                    //return "Cooking/addIngredient";
                     ingredientDishList.add(ingredientDish);
                     ingredients.removeIf(x->x.getNameIngredient().equals(ingredientDish.getIngredient().getNameIngredient()));
+                }
+            }
+            else{
+                if(!bindingResult.hasErrors()){
+                    ingredientDishList.add(ingredientDish);
+                    ingredients.removeIf(x->x.getNameIngredient().equals(ingredientDish.getIngredient().getNameIngredient()));
+                }
             }
             model.addAttribute("ingredients",ingredients);
             model.addAttribute("selectedIngredientDishes",ingredientDishList);
+
+
+
             return "Cooking/addIngredient";
         }
 
@@ -587,6 +839,15 @@ public class CookingController {
         return "Cooking/addIngredientR";
     }
 
+
+
+
+    //
+
+
+
+
+
     @GetMapping("/AddIngredientRInRecipe")
     public String createCookingAddIngredientRAdd(Model model){
         model.addAttribute("cooking",cookingI);
@@ -614,10 +875,12 @@ public class CookingController {
                 //ingredients.removeIf(x->x.getNameIngredient().equals(ingredientService.getIngredientById(Long.valueOf(data[0])).get().getNameIngredient()));
             }
         }
+        model.addAttribute("error", "false");
         model.addAttribute("ingredientsR",ingredientsForReplace);
         return "Cooking/addIngredientR";
     }
 
+    //model.addAttribute("error", "Данное блюдо невозможно удалить, тк оно содержит рецепты");
 
     @PostMapping("/AddIngredientRInRecipe")
 
@@ -625,7 +888,14 @@ public class CookingController {
                                                 @ModelAttribute @Valid IngredientReplacement ingredientReplacement,
                                                 @RequestParam(required=false) Collection<String> selectedIngredientDishesList,
                                                 @RequestParam(required=false) Collection<String> selectedIngredientReplacesList,
-                                                @RequestParam(required=false) String action){//userName
+                                                @RequestParam(required=false) String action,BindingResult bindingResult){//userName
+
+        //тут
+        //valueIngredient
+
+
+
+
 
         model.addAttribute("cooking",cooking);
         model.addAttribute("ingredientReplacement",new IngredientReplacement());
@@ -638,7 +908,23 @@ public class CookingController {
                     String[] data=item.split("/");
                     ingredientReplacementListList.add(new IngredientReplacement(ingredientService.getIngredientById(Long.valueOf(data[0])).get() ,BigDecimal.valueOf(Float.valueOf(data[1])),ingredientService.getIngredientById(Long.valueOf(data[2])).get() ,data[3]));
                 }
-                ingredientReplacementListList.add(ingredientReplacement);
+                //
+
+
+
+                if(ingredientReplacementListList.stream().filter(x -> x.getIngredient().getNameIngredient().equals(ingredientReplacement.getIngredient().getNameIngredient())&&
+                        x.getIngredientRep().getNameIngredient().equals(ingredientReplacement.getIngredientRep().getNameIngredient()) ).findFirst().isPresent()){
+                    model.addAttribute("error", "Заменитель уже добавлен");
+                }
+                else  if(ingredientReplacement.getIngredientRep().getNameIngredient().equals(ingredientReplacement.getIngredient().getNameIngredient())){
+                    model.addAttribute("error", "Данный ингредиент не может быть заменителем");
+                }
+                else{
+                    ingredientReplacementListList.add(ingredientReplacement);
+                    model.addAttribute("error", "false");
+                }
+
+
             }
             else{
                 ingredientReplacementListList.add(ingredientReplacement);
@@ -661,8 +947,15 @@ public class CookingController {
 
             model.addAttribute("ingredients",ingredientService.list());
 
+
+
+
         return "Cooking/addIngredientR";
     }
+
+
+
+
 
 
     @PostMapping("/DeleteIngredientRInRecipe")
@@ -678,7 +971,7 @@ public class CookingController {
 
 
         List<IngredientReplacement> ingredientReplacementListList=new ArrayList<>();
-
+        model.addAttribute("error", "false");
         if(selectedIngredientReplacesList!=null){
             for (var item:selectedIngredientReplacesList) {
                 String[] data = item.split("/");
@@ -715,6 +1008,9 @@ public class CookingController {
         return "Cooking/addIngredientR";
     }
 
+
+
+
     @PostMapping("/AddImage")
     public String addImageCooking(Model model,  @ModelAttribute Cooking cooking,
                                   @RequestParam(required=false) Collection<String> selectedIngredientDishesList,
@@ -735,7 +1031,9 @@ public class CookingController {
             @RequestParam("file") List<MultipartFile> file) throws IOException//несколько
         {
             String path= System.getProperty("user.dir")+"\\src\\main\\resources\\static\\Images";
-
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String nameUser=authentication.getName();
+            cooking.setAuthor(nameUser);
             cookingService.postCooking(cooking);
             List<Cooking> cookingList = cookingService.list();
             Long cookingId =cookingList.stream().count();
@@ -1020,12 +1318,15 @@ public class CookingController {
         model.addAttribute("ingredients",ingredientService.list());
         model.addAttribute("ingredientsR",ingredientsForReplace);
         model.addAttribute("ingredientReplacement",new IngredientReplacement());
+        model.addAttribute("error", "false");
+
         return "Cooking/addIngredientRChange";
     }
 
 
     @GetMapping("/ChangeAddIngredientRInRecipe")
     public String changeCookingAddIngredientRAdd(Model model){
+        model.addAttribute("error", "false");
         model.addAttribute("cooking",cookingStatic);
         model.addAttribute("ingredients",ingredientService.list());
         model.addAttribute("ingredientReplacement",new IngredientReplacement());
@@ -1074,17 +1375,19 @@ public class CookingController {
 
         //List<IngredientReplacement> ingredientReplacementListList=new ArrayList<>();
 
-        if(selectedIngredientReplacesList!=null){
-//            for (var item:selectedIngredientReplacesList) {
-//                String[] data=item.split("/");
-//                ingredientReplacementListList.add(new IngredientReplacement(ingredientService.getIngredientById(Long.valueOf(data[0])).get() ,BigDecimal.valueOf(Float.valueOf(data[1])),ingredientService.getIngredientById(Long.valueOf(data[2])).get() ,data[3]));
-//            }
-            ingredientReplacementList.add(ingredientReplacement);
+
+        if(ingredientReplacementList.stream().filter(x -> x.getIngredient().getNameIngredient().equals(ingredientReplacement.getIngredient().getNameIngredient())&&
+                x.getIngredientRep().getNameIngredient().equals(ingredientReplacement.getIngredientRep().getNameIngredient()) ).findFirst().isPresent()){
+            model.addAttribute("error", "Заменитель уже добавлен");
+        }
+        else  if(ingredientReplacement.getIngredientRep().getNameIngredient().equals(ingredientReplacement.getIngredient().getNameIngredient())){
+            model.addAttribute("error", "Данный ингредиент не может быть заменителем");
         }
         else{
             ingredientReplacementList.add(ingredientReplacement);
-
+            model.addAttribute("error", "false");
         }
+
 
         List<Ingredient> ingredientsForReplace=new ArrayList<>();
         if(selectedIngredientDishesList!=null){
@@ -1120,7 +1423,7 @@ public class CookingController {
 
 
         //L//ist<IngredientReplacement> ingredientReplacementListList=new ArrayList<>();
-
+        model.addAttribute("error", "false");
         if(selectedIngredientReplacesList!=null){
 //            for (var item:selectedIngredientReplacesList) {
 //                String[] data = item.split("/");

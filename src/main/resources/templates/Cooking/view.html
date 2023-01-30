@@ -29,11 +29,12 @@
                 <li><a href="/dishCategory">Категории блюд</a></li>
                 <li><a href="/ingredient">Ингредиенты</a></li>
                 <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
-                <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
-                <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
-                <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
-                <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
-                <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+
+                <li><a  th:if="${#httpServletRequest.remoteUser}==null" href="/account/registration" id="registerLink">Регистрация</a></li>
+                <li><a  th:if="${#httpServletRequest.remoteUser}==null" href="/login" id="loginLink">Выполнить вход</a></li>
+                <li><a  th:if="${#httpServletRequest.remoteUser}!=null" href="/cooking/SelectedRecipe" >Избранное</a></li>
+                <li><a  th:if="${#httpServletRequest.remoteUser}!=null" href="/account" th:text="${'Пользователь: '+{#httpServletRequest.remoteUser}}"></a></li>
+                <li><a  th:if="${#httpServletRequest.remoteUser}==null" href="/login?logout" >Выход</a></li>
             </ul>
         </div>
     </div>
@@ -154,7 +155,7 @@
                         </tr>
                         </tbody>
                     </table>
-
+                </div>
                     <div class="container" th:if="${ingredientReplaces != null} and ${ingredientReplaces.size() > 0} ">
                         <br>
                         <table id='dishingredientR' class="table table-bordered">
@@ -180,7 +181,7 @@
                         </table>
 
                     </div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -225,7 +226,7 @@
 
     <hr />
     <footer>
-        <p>&copy; 2023 - мое приложение ASP.NET</p>
+        <p>&copy; 2023 - мое приложение Spring</p>
     </footer>
 </div>
 <script src="/jquery-3.4.1.js"></script>

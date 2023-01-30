@@ -24,7 +24,7 @@ public class WebSecurityConfig  {
 ///login?logout
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((requests) -> requests.antMatchers( "/","/dish/**","/dishCategory/**","/ingredient/**","/ingredientCategory/**","/resources/static/Images/**","/registration","/login").permitAll().antMatchers("/resources/**").permitAll()
+        http.authorizeHttpRequests((requests) -> requests.antMatchers( "/","/dish/**","/dishCategory/**","/cooking/**","/ingredient/**","/ingredientCategory/**","/resources/static/Images/**","/registration","/login?logout","/login").permitAll().antMatchers("/resources/**").permitAll()
                         .antMatchers("/*.jpg").permitAll().antMatchers("/*.json").permitAll().antMatchers("/*.JPG").permitAll().antMatchers("/*.css").permitAll().antMatchers("/*.js").permitAll().
                         antMatchers("/*.png").permitAll().antMatchers("/*.map").permitAll().antMatchers("/*.scss").permitAll().antMatchers("/*.less").permitAll().
                         anyRequest().authenticated()

@@ -1,5 +1,6 @@
 package com.example.CulinaryGuide.controllers;
 
+import com.example.CulinaryGuide.models.Authentication.Role;
 import com.example.CulinaryGuide.models.Authentication.Userstable;
 import com.example.CulinaryGuide.models.Cooking;
 import com.example.CulinaryGuide.models.Dish;
@@ -34,20 +35,29 @@ public class AccountController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
         model.addAttribute("account", userService.loadUserByUsername(currentUserName));
+        if(currentUserName.equals("anonymousUser")){
+            return "redirect:/cooking";
+        }
+        Role role=roleService.loadRoleByUsername(currentUserName);
+        model.addAttribute("role",role.getAuthority());
+        model.addAttribute("user",currentUserName);
         return "Authentication/personalAccount";
     }
-//
+
 
     @GetMapping("/EditPassword")
-    public String editData(Model model) {
+    public String editPass(Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = authentication.getName();
         model.addAttribute("account", userService.loadUserByUsername(currentUserName));
+        if(currentUserName.equals("anonymousUser")){
+            return "redirect:/cooking";
+        }
+        Role role=roleService.loadRoleByUsername(currentUserName);
+        model.addAttribute("role",role.getAuthority());
+        model.addAttribute("user",currentUserName);
         return "Authentication/editPassword";
     }
-
-
-
     @PostMapping("/ChangeProfile")
     public String editData(Model model,@RequestParam(required = false) String email) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -58,6 +68,22 @@ public class AccountController {
         //model.addAttribute("account", userService.loadUserByUsername(currentUserName));
         return "redirect:/account";
     }
+
+    @GetMapping("/EditData")
+    public String editData(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = authentication.getName();
+        model.addAttribute("account", userService.loadUserByUsername(currentUserName));
+        if(currentUserName.equals("anonymousUser")){
+            return "redirect:/cooking";
+        }
+        Role role=roleService.loadRoleByUsername(currentUserName);
+        model.addAttribute("role",role.getAuthority());
+        model.addAttribute("user",currentUserName);
+        return "Authentication/editData";
+    }
+
+
 
     @PostMapping("/ChangePassword")
     public String editPassword(Model model,@RequestParam String newPassword,@RequestParam String oldPassword,@RequestParam String repPassword) {

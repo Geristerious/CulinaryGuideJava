@@ -64,8 +64,8 @@
         <a th:href= "@{'/cooking/DeleteSelectedRecipes/'+${cooking.id}}">Удалить из избранного</a>
         <a th:href="@{'/cooking/View/'+${cooking.id}}">| Посмотреть рецепт</a>
         <a  th:if="${user==cooking.author} or ${role}=='ADMIN'"  th:href="@{'/cooking/WorkWithImage/'+${cooking.id}}">| Работа с изображениями</a>
-        <a  th:if="${user==cooking.author} or ${role}=='ADMIN'"  th:href="@{'/cooking/Edit/'+${cooking.id}}">| Изменить</a>
-        <a  th:if="${user==cooking.author} or ${role}=='ADMIN'"  th:href="@{'/cooking/Delete/'+${cooking.id}}">| Удалить</a>
+        <a th:if="${user==cooking.author} or ${role}=='ADMIN'" th:href="@{'/cooking/ChangeCooking/'+${cooking.id}}">| Изменить</a>
+        <a th:if="${user==cooking.author} or ${role}=='ADMIN'"  th:href="@{'/cooking/Delete/'+${cooking.id}}">| Удалить</a>
       </td>
     </tr>
 
@@ -74,7 +74,7 @@
 
   <hr />
   <footer>
-    <p>&copy; 2023 - мое приложение ASP.NET</p>
+    <p>&copy; 2023 - мое приложение Spring</p>
   </footer>
 </div>
 <script src="/jquery-3.4.1.js"></script>

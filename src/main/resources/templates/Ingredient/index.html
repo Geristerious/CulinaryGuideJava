@@ -76,17 +76,46 @@
       <td th:text="${ingredient.nameIngredient}"/>
       <td th:text="${ingredient.ingredientCategory.nameIngredientCategory}"/>
       <td >
-        <a th:href="@{'/cooking/ViewIngredient/'+${ingredient.id}}">Посмотреть блюда</a>
-        <a th:if="${role}!='anonymousUser'" th:href="@{'/ingredient/Edit/'+${ingredient.id}}">| Изменить</a>
-        <a th:if="${role}!='anonymousUser'" th:href="@{'/ingredient/Delete/'+${ingredient.id}}">| Удалить</a>
+        <form  th:action="@{'/cooking'}" th:method="POST" >
+          <input type="hidden" th:name="selectedDishId" th:value="${''}">
+          <input type="hidden" th:name="selectedIngredientsId" th:value="${ingredient.id}">
+          <input name="submit1" type="submit" value="Посмотреть блюда" class="btn btn-default">
+          <a th:if="${role}!='anonymousUser'" th:href="@{'/ingredient/Edit/'+${ingredient.id}}">|    Изменить</a>
+          <a th:if="${role}!='anonymousUser'" th:href="@{'/ingredient/Delete/'+${ingredient.id}}">|   Удалить</a>
+        </form>
+<!--        <a th:if="${role}!='anonymousUser'" th:href="@{'/ingredient/Edit/'+${ingredient.id}}">| Изменить</a>-->
       </td>
+      <td >
+<!--      <a th:if="${role}!='anonymousUser'" th:href="@{'/ingredient/Edit/'+${ingredient.id}}">| Изменить</a>-->
+<!--      <a th:if="${role}!='anonymousUser'" th:href="@{'/ingredient/Delete/'+${ingredient.id}}">| Удалить</a>-->
+      </td >
     </tr>
   </table>
   <hr />
   <footer>
-    <p>&copy; 2023 - мое приложение ASP.NET</p>
+    <p>&copy; 2023 - мое приложение Spring</p>
   </footer>
 </div>
+    <style type="text/css">
+    form input[name="submit1"] {
+        padding-top: 0.2px;
+        padding-left: 45px;
+        background: none;
+        border: none;
+        color: steelblue;
+        cursor: pointer;
+    }
+        form input[name="submit1"]:hover {
+            padding-top: 1px;
+            background: none;
+            border: none;
+            color: steelblue;
+            cursor: pointer;
+            text-decoration: underline;
+            padding-top: 0.2px;
+            padding-left: 45px;
+        }
+</style>
 <script src="/jquery-3.4.1.js"></script>
 <script src="/bootstrap.js"></script>
 </body>

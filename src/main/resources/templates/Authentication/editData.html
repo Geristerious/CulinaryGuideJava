@@ -50,7 +50,7 @@
         <div class="col-md-2">
           <big>  <label th:text="${'E-mail:'}">  </label></big>
         </div>
-        <input th:name="email" th:value="${account.email}" type="email"/>
+        <input  class="form-control text-box single-line"  required th:name="email" th:value="${account.email}" type="email"/>
       </div>
     </div>
     <td><input type="submit" value="Сохранить изменения" class="btn btn-default" /></td>
@@ -60,7 +60,7 @@
 
   <hr />
   <footer>
-    <p>&copy; 2023 - мое приложение ASP.NET</p>
+    <p>&copy; 2023 - мое приложение Spring</p>
   </footer>
 </div>
 <script src="/jquery-3.4.1.js"></script>

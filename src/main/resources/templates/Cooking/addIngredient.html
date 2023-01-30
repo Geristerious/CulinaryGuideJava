@@ -29,11 +29,12 @@
                 <li><a href="/dishCategory">Категории блюд</a></li>
                 <li><a href="/ingredient">Ингредиенты</a></li>
                 <li><a href="/ingredientCategory">Категории ингредиентов</a></li>
-                <li><a th:if="${user}=='anonymousUser'" href="/account/registration" id="registerLink">Регистрация</a></li>
-                <li><a th:if="${user}=='anonymousUser'" href="/login" id="loginLink">Выполнить вход</a></li>
-                <li><a th:if="${user}!='anonymousUser'" href="/cooking/SelectedRecipe" >Избранное</a></li>
-                <li><a th:if="${user}!='anonymousUser'" href="/account" th:text="${'Пользователь: '+user}"></a></li>
-                <li><a th:if="${user}!='anonymousUser'" href="/login?logout" >Выход</a></li>
+
+                <li><a  th:if="${#httpServletRequest.remoteUser}==null" href="/account/registration" id="registerLink">Регистрация</a></li>
+                <li><a  th:if="${#httpServletRequest.remoteUser}==null" href="/login" id="loginLink">Выполнить вход</a></li>
+                <li><a  th:if="${#httpServletRequest.remoteUser}!=null" href="/cooking/SelectedRecipe" >Избранное</a></li>
+                <li><a  th:if="${#httpServletRequest.remoteUser}!=null" href="/account" th:text="${'Пользователь: '+{#httpServletRequest.remoteUser}}"></a></li>
+                <li><a  th:if="${#httpServletRequest.remoteUser}==null" href="/login?logout" >Выход</a></li>
             </ul>
         </div>
     </div>
@@ -59,13 +60,15 @@
                     Ингредиент
                 </div>
                 <div class="col-md-10">
-                    <select th:field="*{ingredient}"  th:name="selectedIngredientId" class="form-control chosen-category" >
+                    <select th:field="*{ingredient}"  th:name="selectedIngredientId" required class="form-control chosen-category" >
                         <option value="">Выберите ингредиент</option>
                         <option  th:each="ingredient :${ingredients}"
                                  th:value="${ingredient.id}"
                                  th:text="${ingredient.nameIngredient}">
                     </select>
-                    <span class="field-validation-valid text-danger" data-valmsg-for="Ingredient" data-valmsg-replace="true"></span>
+<!--                    <span  class="text-danger field-validation-error"  data-valmsg-replace="true"/>-->
+
+                    <span th:if="${#fields.hasErrors('ingredient')}"  th:errors="*{ingredient}" class="field-validation-valid text-danger" data-valmsg-for="Ingredient" data-valmsg-replace="true"></span>
                 </div>
             </div>
             <div class="form-group">
@@ -73,8 +76,10 @@
                     Количество ингредиента
                 </div>
                 <div class="col-md-10">
-                    <input th:field="*{valueIngredient}" class="form-control text-box single-line" data-val="true" data-val-number="Значением поля ValueIngredient должно быть число." data-val-range="Количество не должго привышать 9999" data-val-range-max="9999" data-val-range-min="0.01"  id="valueIngredient" max="999999" min="0.01"  step="0.01" type="number" value="" />
-                    <span class="field-validation-valid text-danger" data-valmsg-for="valueIngredient" data-valmsg-replace="true"></span>
+                    <input required th:field="*{valueIngredient}" class="form-control text-box single-line" data-val="true" data-val-number="Значением поля ValueIngredient должно быть число." data-val-range="Количество не должго привышать 9999" data-val-range-max="9999" data-val-range-min="0.01"  id="valueIngredient" max="9999" min="0.01"  step="0.01" type="number" value="" />
+<!--                    <span class="field-validation-valid text-danger" data-valmsg-for="valueIngredient" data-valmsg-replace="true"></span>-->
+                    <span th:if="${#fields.hasErrors('valueIngredient')}"  th:errors="*{valueIngredient}" class="field-validation-valid text-danger" data-valmsg-for="Ingredient" data-valmsg-replace="true"></span>
+
                 </div>
             </div>
             <div class="form-group">
@@ -82,7 +87,7 @@
                     Единицы измерения
                 </div>
                 <div class="col-md-10">
-                    <select th:field="*{unitMeasure}" class="form-control chosen-category" id="unitMeasure" >
+                    <select required th:field="*{unitMeasure}" class="form-control chosen-category" id="unitMeasure" >
                         <option value="" >Выберите единицы измерения</option>
                         <option value="гр">гр</option>
                         <option value="кг">кг</option>
@@ -92,7 +97,9 @@
                         <option value="с. ложка">с. ложка</option>
                         <option value="шт">шт</option>
                     </select>
-                    <span class="field-validation-valid text-danger" data-valmsg-for="unitMeasure" data-valmsg-replace="true"></span>
+                    <span th:if="${#fields.hasErrors('unitMeasure')}"  th:errors="*{unitMeasure}" class="field-validation-valid text-danger" data-valmsg-for="Ingredient" data-valmsg-replace="true"></span>
+
+                    <!--                    <span class="field-validation-valid text-danger" data-valmsg-for="unitMeasure" data-valmsg-replace="true"></span>-->
                 </div>
             </div>
             <div class="form-group">
@@ -185,11 +192,11 @@
             </form>
         </div>
 <!--        тут-->
-        <a href="/Cookings">Вернуться к списку рецептов</a>
+        <a href="/cooking">Вернуться к списку рецептов</a>
 
     <hr />
     <footer>
-        <p>&copy; 2023 - мое приложение ASP.NET</p>
+        <p>&copy; 2023 - мое приложение Spring</p>
     </footer>
 </div>
 

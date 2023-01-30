@@ -50,7 +50,7 @@
         <div class="form-group">
             <label class="control-label col-md-2" for="UserName">Логин</label>
             <div class="col-md-10">
-                <input type="text" path="username" id="UserName" th:field="*{username}" placeholder="Username" autofocus="true"></input>
+                <input class="form-control text-box single-line" type="text" path="username" id="UserName" th:field="*{username}"  autofocus="true"></input>
                 <span class="field-validation-valid text-danger" data-valmsg-for="UserName" data-valmsg-replace="true"></span>
             </div>
         </div>
@@ -58,17 +58,17 @@
         <div class="form-group">
             <label class="control-label col-md-2" for="Password">Пароль</label>
             <div class="col-md-10">
-                <input type="password" id="Password" th:field="*{password}" path="password" placeholder="Password"></input>
-                <span class="field-validation-valid text-danger" data-valmsg-for="Password" data-valmsg-replace="true"></span>
+                <input class="form-control text-box single-line" type="password" id="Password" th:field="*{password}" path="password" ></input>
+                <span class="field-validation-valid text-danger" data-valmsg-replace="true"></span>
             </div>
         </div>
 
         <div class="form-group">
             <label class="control-label col-md-2" for="ConfirmPassword">Повторите пароль</label>
             <div class="col-md-10">
-                <input type="password" id="ConfirmPassword" th:field="*{passwordConfirm}" path="passwordConfirm"
-                       placeholder="Confirm your password"></input>
-                <span class="field-validation-valid text-danger" data-valmsg-for="ConfirmPassword" data-valmsg-replace="true"></span>
+                <input class="form-control text-box single-line"  type="password" id="ConfirmPassword" th:field="*{passwordConfirm}" path="passwordConfirm"
+                      ></input>
+                <span class="field-validation-valid text-danger"  data-valmsg-replace="true"></span>
             </div>
         </div>
             <input type="hidden" id="1" th:field="*{enabled}" th:value="1" path="email"
@@ -76,9 +76,9 @@
         <div class="form-group">
             <label class="control-label col-md-2" for="Email">E-mail</label>
             <div class="col-md-10">
-                <input type="email" id="Email" th:field="*{email}" path="email"
-                       placeholder="Confirm your password"></input>
-                <span class="field-validation-valid text-danger" data-valmsg-for="Email" data-valmsg-replace="true"></span>
+                <input class="form-control text-box single-line" type="email" id="Email" th:field="*{email}" path="email"
+                       ></input>
+                <span class="field-validation-valid text-danger" data-valmsg-replace="true"></span>
             </div>
         </div>
         <div class="form-group">
@@ -91,7 +91,7 @@
     </form>
     <hr />
     <footer>
-        <p>&copy; 2023 - мое приложение ASP.NET</p>
+        <p>&copy; 2023 - мое приложение Spring</p>
     </footer>
 </div>
 

@@ -3,6 +3,8 @@ package com.example.CulinaryGuide.models;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import javax.persistence.*;
+import javax.validation.constraints.Size;
+
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -25,6 +27,7 @@ public class Cooking {
     private Long id;
 
     private String timeCooking;
+    @Size(max = 5000, message = "Максимальное количество символов 5000")
     private String descriptionCooking;
     private String author ;
     @ManyToOne

@@ -32,4 +32,9 @@ public class CookingService {
     public List<Cooking> getCookingByDishId(Long id){
         return cookingRepository.getCookingByDish_Id(id) ;
     }
+
+    public List<Cooking> getCookingByAuthor(String author){
+        return cookingRepository.getCookingByAuthor(author) ;
+    }
+    //getCookingByAuthor
 }

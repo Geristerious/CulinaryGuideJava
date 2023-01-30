@@ -29,18 +29,18 @@ public class Dish {
     @Pattern(regexp = "^[а-яёА-ЯЁ\s]*$",message = "Используйте буквы принадлежащие русскому алфавиту")
     private String nameDish;
 
-    @DecimalMax(value = "9999",message ="Количесетво калорий должно принадлежать интервалу от 1 до 9999" )
-    @DecimalMin(value = "1",message ="Количесетво калорий должно принадлежать интервалу от 1 до 9999")
+    @DecimalMax(value = "9999",message ="Количество калорий должно принадлежать интервалу от 0 до 9999" )
+//    @DecimalMin(value = "1",message ="Количесетво калорий должно принадлежать интервалу от 1 до 9999")
     private BigDecimal valueCalories;
-    @DecimalMax(value = "9999",message ="Количесетво жиров должно принадлежать интервалу от 1 до 9999" )
-    @DecimalMin(value = "1",message ="Количесетво жиров должно принадлежать интервалу от 1 до 9999")
+    @DecimalMax(value = "9999",message ="Количество жиров должно принадлежать интервалу от 0 до 9999" )
+//    @DecimalMin(value = "1",message ="Количесетво жиров должно принадлежать интервалу от 1 до 9999")
     private BigDecimal valueFats;
-    @DecimalMax(value = "9999",message ="Количесетво белков должно принадлежать интервалу от 1 до 9999" )
-    @DecimalMin(value = "1",message ="Количесетво белков должно принадлежать интервалу от 1 до 9999")
+    @DecimalMax(value = "9999",message ="Количество белков должно принадлежать интервалу от 0 до 9999" )
+//    @DecimalMin(value = "1",message ="Количесетво белков должно принадлежать интервалу от 1 до 9999")
     private BigDecimal valueProteins;
 
-    @DecimalMax(value = "9999",message ="Количесетво углеводов должно принадлежать интервалу от 1 до 9999" )
-    @DecimalMin(value = "1",message ="Количесетво углеводов должно принадлежать интервалу от 1 до 9999")
+    @DecimalMax(value = "9999",message ="Количество углеводов должно принадлежать интервалу от 1 до 9999" )
+//    @DecimalMin(value = "1",message ="Количесетво углеводов должно принадлежать интервалу от 1 до 9999")
     private BigDecimal valueCarbohydrates;
     private String author;
 

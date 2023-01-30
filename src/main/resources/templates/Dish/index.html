@@ -92,20 +92,53 @@
       <td th:text="${dish.valueCalories}"/>
 
       <td >
-        <a th:href="@{'/cooking/ViewDish/'+${dish.id}}">Посмотреть рецепты</a>
-        <a th:if="${role}!='anonymousUser'" th:href="@{'/cooking/CreateCooking/'+${dish.id}}">| Создать рецепт</a>
-        <a th:if="${user==dish.author} or ${role}=='ADMIN'"  th:href="@{'/dish/Edit/'+${dish.id}}">| Изменить</a>
-        <a th:if="${user==dish.author} or ${role}=='ADMIN'"  th:href="@{'/dish/Delete/'+${dish.id}}">| Удалить</a>
+<!--        cooking-->
+<!--        <form name="myform" action="data.php">-->
+
+<!--          <a href="document.myform.submit();">Отправить</a>-->
+<!--        </form>-->
+<!--        -->
+
+
+        <form  th:action="@{'/cooking'}" th:method="POST" >
+          <input type="hidden" th:name="selectedDishId" th:value="${dish.id}">
+          <input name="submit1" type="submit" value="Посмотреть блюда" ></input>
+          <a th:if="${role}!='anonymousUser'" th:href="@{'/cooking/CreateCooking/'+${dish.id}}">| Создать рецепт</a>
+          <a th:if="${user==dish.author} or ${role}=='ADMIN'"  th:href="@{'/dish/Edit/'+${dish.id}}">| Изменить</a>
+          <a th:if="${user==dish.author} or ${role}=='ADMIN'"  th:href="@{'/dish/Delete/'+${dish.id}}">| Удалить</a>
+        </form>
+
+
       </td>
     </tr>
   </table>
 
   <hr />
   <footer>
-    <p>&copy; 2023 - мое приложение ASP.NET</p>
+    <p>&copy; 2023 - мое приложение Spring</p>
   </footer>
 </div>
 <script src="/jquery-3.4.1.js"></script>
 <script src="/bootstrap.js"></script>
+<style type="text/css">
+    form input[name="submit1"] {
+
+        background: none;
+        border: none;
+        color: steelblue;
+        cursor: pointer;
+    }
+        form input[name="submit1"]:hover {
+
+            background: none;
+            border: none;
+            color: steelblue;
+            cursor: pointer;
+            text-decoration: underline;
+
+
+        }
+</style>
 </body>
 </html>
+
